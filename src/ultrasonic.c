@@ -89,7 +89,7 @@ Ultrasonic ultrasonicInit(unsigned char portEcho, unsigned char portPing) {
 	uint32_t pe = portEcho - 1, pp = portPing - 1, i;
 	// Check range
 	if (pe < BOARD_NR_DIGITAL_IO && pe != 9 && _sensorState[pe].flags == 0 &&
-			pp < BOARD_NR_DIGITAL_IO && _sensorState[pp].flags == 0) {
+			pp < BOARD_NR_GPIO_PINS && _sensorState[pp].flags == 0) {
 		_enterCritical();
 		{
 			ultra = &_sensorState[pe];
@@ -134,7 +134,9 @@ Ultrasonic ultrasonicInit(unsigned char portEcho, unsigned char portPing) {
 			slave->portBottom = (uint8_t)pp;
 			// Interrupt on echo falling
 			ioSetInterrupt(portEcho, INTERRUPT_EDGE_FALLING, _ultraISR);
-			ioClearInterrupt(portPing);
+
+			if (portPing < BOARD_NR_DIGITAL_IO) ioClearInterrupt(portPing);
+
 			// If not pinging, start it
 			if (!(ultraFlags.flags & ULTRA_PINGING)) {
 				ultraFlags.flags = ULTRA_PINGING;
