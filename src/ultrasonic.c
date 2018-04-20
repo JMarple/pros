@@ -88,7 +88,7 @@ Ultrasonic ultrasonicInit(unsigned char portEcho, unsigned char portPing) {
 	// Change to 0..11 range
 	uint32_t pe = portEcho - 1, pp = portPing - 1, i;
 	// Check range
-	if (pe < BOARD_NR_DIGITAL_IO && pe != 9 && _sensorState[pe].flags == 0 &&
+	if (pe < BOARD_NR_GPIO_PINS && pe != 9 && _sensorState[pe].flags == 0 &&
 			pp < BOARD_NR_GPIO_PINS && _sensorState[pp].flags == 0) {
 		_enterCritical();
 		{
@@ -106,7 +106,7 @@ Ultrasonic ultrasonicInit(unsigned char portEcho, unsigned char portPing) {
 			// Already guaranteed that _sensorState[pp].flags == 0
 			for (i = portEcho; ; i++) {
 				// Wrap around; can't loop forever, we will find ourselves
-				if (i >= BOARD_NR_DIGITAL_IO)
+				if (i >= BOARD_NR_GPIO_PINS)
 					i = 0;
 				if (_sensorState[i].flags == (uint16_t)0x0005) {
 					// This is the next sensor's echo port
@@ -119,7 +119,7 @@ Ultrasonic ultrasonicInit(unsigned char portEcho, unsigned char portPing) {
 				// Wrap around; can't loop forever, we will find ourselves
 				if (i >= BOARD_NR_DIGITAL_IO)
 					// 0 - 1 = 0xFFFFFFFF (overflow)
-					i = (BOARD_NR_DIGITAL_IO - 1);
+					i = (BOARD_NR_GPIO_PINS - 1);
 				slave = &_sensorState[i];
 				if (slave->flags == (uint16_t)0x0005) {
 					// This is the previous sensor's echo port
